@@ -1,27 +1,10 @@
+add_library( PluginUTLOPESTreadmill SHARED src/UTLOPESTreadmillTwinCAT.cpp )
 
-cmake_minimum_required(VERSION "3.10")
-project("OBEmpowerPlugin")
 
-file(GLOB project_SRC
-	"src/*.hpp"
-    "src/*.cpp"
-)
-
-add_library("${PROJECT_NAME}" SHARED ${project_SRC})
-
-target_include_directories("${PROJECT_NAME}" PRIVATE
-	${CMAKE_SOURCE_DIR}/lib/Producers/DevicePlugin
-)
-
-target_include_directories("${PROJECT_NAME}" PUBLIC
-	${PROJECT_SOURCE_DIR}/src
-)
-
-target_link_libraries("${PROJECT_NAME}"
+TARGET_LINK_LIBRARIES( PluginUTLOPESTreadmill
+	PluginInterface
 	AdsClient
-	XMLInterpreter
-	xmlInput
-	XercesC::XercesC
-	Boost::boost
-	PluginHeritance
-	PluginCommon)
+	MapTools
+)
+
+target_include_directories(PluginUTLOPESTreadmill PUBLIC src)
