@@ -24,20 +24,21 @@ void LOPESTreadmillTwinCAT::init(const std::string& subjectName, const std::stri
 	varNameVect_.insert({"l_ground_force_vy", 0});
 	varNameVect_.insert({"ground_force_vy", 0});
 
-	_conversionMap.insert({"l_ground_force_vy", "EtherCATName"});
-	_conversionMap.insert({"ground_force_vy", "asdfe"});
+	_conversionMap.insert({"l_ground_force_vy", "GaitPhaseDetector.Output.GRF_l_Z"});
+	_conversionMap.insert({"ground_force_vy", "GaitPhaseDetector.Output.GRF_r_Z"});
 
+
+	timeStamp_ = rtb::getTime();
+
+	std::string port = "352"; // Hardcoded for now
+
+	client_ = std::make_shared<tcAdsClient>(std::atoi(port.c_str()));
 
 	for(auto& pair : varNameVect_){
 		std::string varName = _conversionMap.at(pair.first);
 		pair.second = client_->getVariableHandle(&varName[0], (int) varName.size());
 	}
 
-	timeStamp_ = rtb::getTime();
-
-	std::string port = "350"; // Hardcoded for now
-
-	client_ = std::make_shared<tcAdsClient>(std::atoi(port.c_str()));
 	thread_ = std::make_shared<std::thread>(&LOPESTreadmillTwinCAT::Thread, this);
 
 	_xld.insert({"l_ground_force_vy", 0});
@@ -61,15 +62,14 @@ void LOPESTreadmillTwinCAT::Thread()
 		for(auto& pair : dataLocal){
 			client_->read(varNameVect_.at(pair.first), &dataLocal.at(pair.first), sizeof(double));
 		}
-	}
-
-	{
-		std::lock_guard<std::mutex> lock(mtxXLD_);
-		_xld = dataLocal;
-	}
-	{
-		std::lock_guard<std::mutex> lock(mtxTime_);
-		timeStamp_ = timeLocal;
+		{
+			std::lock_guard<std::mutex> lock(mtxXLD_);
+			_xld = dataLocal;
+		}
+		{
+			std::lock_guard<std::mutex> lock(mtxTime_);
+			timeStamp_ = timeLocal;
+		}
 	}
 }
 
