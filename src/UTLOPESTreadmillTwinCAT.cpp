@@ -24,13 +24,13 @@ void LOPESTreadmillTwinCAT::init(const std::string& subjectName, const std::stri
 	varNameVect_.insert({"l_ground_force_vy", 0});
 	varNameVect_.insert({"ground_force_vy", 0});
 
-	_conversionMap.insert({"l_ground_force_vy", "synergy_speed_control_gait_detector.Output.GRF_l_Z"});
-	_conversionMap.insert({"ground_force_vy", "synergy_speed_control_gait_detector.Output.GRF_r_Z"});
+	_conversionMap.insert({"l_ground_force_vy", "GaitPhaseDetector.Output.GRF_l_Z"});
+	_conversionMap.insert({"ground_force_vy", "GaitPhaseDetector.Output.GRF_r_Z"});
 
 
 	timeStamp_ = rtb::getTime();
 
-	std::string port = "352"; // Hardcoded for now
+	std::string port = "351"; // Hardcoded for now
 
 	client_ = std::make_shared<tcAdsClient>(std::atoi(port.c_str()));
 
